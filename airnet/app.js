@@ -46,7 +46,7 @@ const AIRNET_APIS = {
   meteoWx: { base: 'https://api.open-meteo.com/v1/forecast' },
   overpass: { base: 'https://overpass-api.de/api/interpreter' },
   carto: { style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json' },
-  airnet: { base: 'http://localhost:4000/api/v1' },
+  airnet: { base: '/api/v1' },
 };
 
 // ── Shared State ────────────────────────────────────────
