@@ -191,6 +191,13 @@ body {
   scrollbar-width: none;
 }
 
+@media (max-width: 768px) {
+  .header-nav {
+    display: none;
+    /* Hide standard nav on mobile */
+  }
+}
+
 .header-nav::-webkit-scrollbar {
   display: none;
 }
@@ -2822,15 +2829,20 @@ body {
   }
 
   .metrics-bar {
-    padding-bottom: 8px;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 16px;
+    background: transparent;
+    overflow-x: hidden;
   }
 
   .metric-chip {
-    padding: 10px 14px;
-    min-width: 140px;
+    padding: 12px;
+    min-width: 0;
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-faint);
   }
 
   /* Forecast/Analytics Grids */
@@ -2934,40 +2946,43 @@ body {
   filter: drop-shadow(0 0 5px rgba(0, 255, 156, 0.3));
 }
 
+.header-toggle {
+  display: none;
+  margin-left: auto;
+}
+
 @media (max-width: 768px) {
-  .menu-toggle {
-    display: block;
-    margin-left: 8px;
-  }
-
-  .hamburger-icon {
-    display: block !important;
-  }
-
-  .panel-toggle {
-    background: rgba(0, 255, 156, 0.08);
+  .header-toggle {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 255, 156, 0.1);
     border: 1px solid rgba(0, 255, 156, 0.2);
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    color: var(--accent);
     box-shadow: 0 0 15px rgba(0, 255, 156, 0.1);
   }
 
+  /* Hamburger behaves as a high-z-index drawer toggle */
   .header-nav {
+    display: flex !important;
     position: fixed;
     top: 62px;
     left: 0;
     right: 0;
     bottom: 0;
     background: rgba(4, 8, 6, 0.98);
-    /* Deeper dark for higher contrast */
-    backdrop-filter: blur(30px) saturate(1.5);
+    backdrop-filter: blur(30px) saturate(1.8);
     flex-direction: column;
     padding: 32px 24px;
     gap: 16px;
     transform: translateX(100%);
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 2100;
+    z-index: 3000;
+    /* Ensure it stays above everything */
     overflow-y: auto;
-    display: flex;
-    justify-content: flex-start;
     border-top: 1px solid var(--border-mid);
     width: 100% !important;
   }
@@ -2980,18 +2995,18 @@ body {
     width: 100%;
     padding: 18px 20px;
     justify-content: flex-start;
-    font-size: 1rem;
+    font-size: 1.1rem;
     border-radius: var(--r-md);
     background: var(--bg-card);
     border: 1px solid var(--border-faint);
+    color: var(--text-primary);
   }
 
   .nav-btn.active {
     background: var(--accent-dim);
     border-color: var(--accent);
+    color: var(--accent-vivid);
   }
-
-  /* Hide status when menu is large or keep it? Let's keep it small at top */
 }
 
 /* Uniform Text Alignment & Neatness */
