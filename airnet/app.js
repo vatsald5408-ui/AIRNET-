@@ -209,27 +209,35 @@ setInterval(updateClock, 1000);
 updateClock();
 
 // ── Nav ─────────────────────────────────────────────────
-document.querySelectorAll('.nav-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.system-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    const panelId = 'system' + btn.dataset.system;
-    document.getElementById(panelId).classList.add('active');
+function initNav() {
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.system-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const panelId = 'system' + btn.dataset.system;
+      const targetPanel = document.getElementById(panelId);
+      if (targetPanel) targetPanel.classList.add('active');
 
-    // Trigger map resize to fix initialization in hidden containers
-    if (btn.dataset.system === '1' && window._airnetMap) {
-      setTimeout(() => window._airnetMap.resize(), 100);
-    } else if (btn.dataset.system === '3' && window.trajMapInstance) {
-      setTimeout(() => window.trajMapInstance.resize(), 100);
-    } else if (btn.dataset.system === '4' && window._s4MapBefore && window._s4MapAfter) {
-      setTimeout(() => {
-        window._s4MapBefore.resize();
-        window._s4MapAfter.resize();
-      }, 100);
-    }
+      // Trigger map resize to fix initialization in hidden containers
+      if (btn.dataset.system === '1' && window._airnetMap) {
+        setTimeout(() => window._airnetMap.resize(), 100);
+      } else if (btn.dataset.system === '3' && window.trajMapInstance) {
+        setTimeout(() => window.trajMapInstance.resize(), 100);
+      } else if (btn.dataset.system === '4' && window._s4MapBefore && window._s4MapAfter) {
+        setTimeout(() => {
+          window._s4MapBefore.resize();
+          window._s4MapAfter.resize();
+        }, 100);
+      }
+
+      // Close mobile menu if open
+      const header = document.querySelector('.header');
+      if (header) header.classList.remove('nav-open');
+    });
   });
-});
+}
+initNav(); // Also call it immediately for static initialization
 
 // ── Ctrl btn toggles ────────────────────────────────────
 document.querySelectorAll('.panel-controls').forEach(grp => {
@@ -2461,7 +2469,7 @@ function matchZoneToRegion(zoneName, regionId) {
 // BOOT & INITIALIZATION
 // ============================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  initNav();
+  // initNav() is now called at top level or here
   initSystem1();
   initSystem2();
   initSystem3();
@@ -2471,18 +2479,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mobile Menu Toggle Logic
   const menuToggle = document.getElementById('menuToggle');
   const header = document.querySelector('.header');
-  const navBtns = document.querySelectorAll('.nav-btn');
 
   if (menuToggle && header) {
     menuToggle.addEventListener('click', () => {
       header.classList.toggle('nav-open');
-    });
-
-    // Close menu when clicking a link (mobile UX)
-    navBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        header.classList.remove('nav-open');
-      });
     });
   }
 });
