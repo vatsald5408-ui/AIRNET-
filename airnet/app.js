@@ -260,6 +260,14 @@ function initNav() {
     });
   });
 
+  // Handle Close Button
+  const closeBtn = document.getElementById('navCloseBtn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      header.classList.remove('nav-open');
+    });
+  }
+
   // Close menu when clicking outside
   document.addEventListener('click', (e) => {
     if (header.classList.contains('nav-open') && !header.contains(e.target)) {

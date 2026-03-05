@@ -2988,42 +2988,79 @@ body {
   .header-nav {
     display: flex !important;
     position: fixed;
-    top: 62px;
+    top: 0;
+    /* Start from the very top */
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(4, 8, 6, 0.99);
-    backdrop-filter: blur(40px) saturate(1.8);
+    background: rgba(4, 9, 7, 0.995);
+    /* Nearly opaque for immersive feel */
+    backdrop-filter: blur(50px) saturate(2);
     flex-direction: column;
-    padding: 40px 24px;
-    gap: 16px;
-    transform: translateX(100%);
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 3000;
+    padding: 60px 24px;
+    gap: 20px;
+    transform: translateY(-100%);
+    /* Slide from top instead of side for "expansion" feel */
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 4000;
+    /* Super high priority */
     overflow-y: auto;
-    border-top: 1px solid var(--border-mid);
     width: 100% !important;
+    justify-content: center;
+    /* Center items vertically */
+    align-items: center;
+    /* Center items horizontally */
   }
 
   .header.nav-open .header-nav {
-    transform: translateX(0);
+    transform: translateY(0);
+  }
+
+  /* Close button specifically for the full-screen menu */
+  .nav-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 255, 156, 0.3);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    color: #00FF9C;
+    cursor: pointer;
+    z-index: 4001;
   }
 
   .nav-btn {
-    width: 100%;
-    padding: 18px 20px;
-    justify-content: flex-start;
-    font-size: 1.1rem;
-    border-radius: var(--r-md);
-    background: var(--bg-card);
-    border: 1px solid var(--border-faint);
+    width: 85%;
+    /* Slightly narrower for central focus */
+    max-width: 320px;
+    padding: 22px 24px;
+    justify-content: center;
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(0, 255, 156, 0.1);
     color: var(--text-primary);
+    text-transform: uppercase;
+    transition: all 0.3s ease;
   }
 
   .nav-btn.active {
-    background: var(--accent-dim);
-    border-color: var(--accent);
-    color: var(--accent-vivid);
+    background: linear-gradient(135deg, rgba(0, 255, 156, 0.2), rgba(0, 212, 160, 0.1));
+    border-color: #00FF9C;
+    color: #00FF9C;
+    box-shadow: 0 0 30px rgba(0, 255, 156, 0.15);
+  }
+
+  .nav-dot {
+    display: none;
+    /* Hide dots in full-screen center mode */
   }
 }
 
