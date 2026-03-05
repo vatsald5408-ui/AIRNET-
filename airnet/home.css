@@ -612,3 +612,78 @@ body {
     color: #00FF9C;
     text-decoration: underline;
 }
+
+/* ============================================================================
+   RESPONSIVE IMPROVEMENTS (Added 2026-03-05)
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+    .hero-content {
+        padding: 0 40px 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .site-header {
+        padding: 0 24px;
+        gap: 16px;
+    }
+
+    .header-nav {
+        display: none;
+        /* Navigation handled by dashboard entry on mobile */
+    }
+
+    .hero-content {
+        padding: 0 24px 48px;
+        max-width: 100%;
+    }
+
+    .hero-headline {
+        font-size: clamp(1.8rem, 8vw, 2.8rem);
+    }
+
+    .hero-sub {
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+
+    .data-strip {
+        padding: 10px 24px;
+    }
+
+    .footer-inner {
+        flex-direction: column;
+        gap: 24px;
+        text-align: center;
+    }
+
+    .footer-contact {
+        margin-top: 8px;
+    }
+
+    .cta-wrap {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .scroll-hint {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .site-header {
+        padding: 0 16px;
+    }
+
+    .hero-content {
+        padding: 0 20px 40px;
+    }
+
+    .cta-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

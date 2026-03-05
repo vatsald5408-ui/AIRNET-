@@ -2736,3 +2736,143 @@ body {
   border-top: 1px solid var(--border-faint);
   padding-top: 12px;
 }
+
+/* ============================================================================
+   RESPONSIVE LAYER (Added 2026-03-05)
+   ============================================================================ */
+
+/* ── Tablets & Small Laptops (under 1100px) ── */
+@media (max-width: 1100px) {
+  .s1-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .s1-right {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  #delhiMap {
+    height: 420px;
+  }
+
+  .main-content {
+    padding: 16px;
+  }
+}
+
+/* ── Mobile & Small Tablets (under 768px) ── */
+@media (max-width: 768px) {
+  .header {
+    height: auto;
+    padding: 12px 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .header-nav {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    padding-bottom: 4px;
+    border-top: 1px solid var(--border-faint);
+    padding-top: 8px;
+  }
+
+  .header-status {
+    margin-left: auto;
+  }
+
+  .nav-btn {
+    padding: 5px 10px;
+    font-size: 0.72rem;
+  }
+
+  .brand-name {
+    font-size: 1rem;
+  }
+
+  .panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 16px;
+  }
+
+  .s1-right {
+    grid-template-columns: 1fr;
+  }
+
+  .metrics-bar {
+    padding-bottom: 8px;
+  }
+
+  .metric-chip {
+    padding: 10px 14px;
+  }
+
+  /* Forecast/Analytics Grids */
+  .s2-grid,
+  .s3-grid,
+  .s4-grid,
+  .s5-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .panel-title {
+    font-size: 1.25rem;
+  }
+
+  .system-num {
+    font-size: 1.8rem;
+  }
+}
+
+/* ── Small Phones (under 480px) ── */
+@media (max-width: 480px) {
+  .header-brand {
+    gap: 8px;
+  }
+
+  .brand-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .brand-name {
+    font-size: 0.9rem;
+  }
+
+  .header-nav {
+    gap: 2px;
+  }
+
+  .nav-btn span {
+    display: none;
+    /* Icon only for very small screens or keep short? Let's keep icons but smaller text */
+  }
+
+  .nav-btn {
+    padding: 6px;
+  }
+
+  .nav-dot {
+    margin: 0;
+  }
+
+  #delhiMap {
+    height: 350px;
+  }
+
+  .header-status {
+    gap: 4px;
+  }
+
+  .status-time {
+    display: none;
+  }
+}
