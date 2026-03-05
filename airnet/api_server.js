@@ -23,13 +23,13 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-/* ── Static Frontend Files ───────────────────────────────── */
-// Serve all files in the root directory as static assets
-app.use(express.static(path.join(__dirname)));
-
 /* ── Frontend Routes ─────────────────────────────────────── */
 app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'home.html')));
 app.get('/dashboard', (_req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+
+/* ── Static Frontend Files ───────────────────────────────── */
+// Serve all files in the root directory as static assets
+app.use(express.static(path.join(__dirname)));
 
 /* ── API Routes ──────────────────────────────────────────── */
 app.use('/api/v1/simulate', require('./api/simulate'));
