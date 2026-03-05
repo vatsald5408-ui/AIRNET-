@@ -2876,3 +2876,97 @@ body {
     display: none;
   }
 }
+
+/* ============================================================================
+   HAMBURGER MENU & ALIGNMENT REFINEMENT (Added 2026-03-05)
+   ============================================================================ */
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 8px;
+  z-index: 1001;
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+    margin-left: 8px;
+  }
+
+  .header-nav {
+    position: fixed;
+    top: 62px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-surface);
+    flex-direction: column;
+    padding: 24px;
+    gap: 12px;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+    display: flex;
+    justify-content: flex-start;
+    border-top: 1px solid var(--border-mid);
+  }
+
+  .header.nav-open .header-nav {
+    transform: translateX(0);
+  }
+
+  .nav-btn {
+    width: 100%;
+    padding: 14px 20px;
+    justify-content: flex-start;
+    font-size: 0.95rem;
+    border-radius: var(--r-md);
+    background: var(--bg-card);
+  }
+
+  .nav-btn.active {
+    background: var(--accent-dim);
+  }
+
+  /* Hide status when menu is large or keep it? Let's keep it small at top */
+}
+
+/* Uniform Text Alignment & Neatness */
+.card,
+.panel-header,
+.metric-chip,
+.api-card {
+  text-align: left !important;
+  /* Force left alignment for uniformity */
+}
+
+.panel-title,
+.card-title,
+.metric-label,
+.ts-label {
+  text-align: left;
+}
+
+.metric-chip {
+  align-items: flex-start;
+}
+
+.card-header {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cta-btn {
+  justify-content: center;
+}
+
+/* Ensure select inputs look uniform */
+.form-select {
+  text-align: left;
+  padding-left: 12px;
+}

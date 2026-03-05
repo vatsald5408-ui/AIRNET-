@@ -2458,6 +2458,36 @@ function matchZoneToRegion(zoneName, regionId) {
 }
 
 // ============================================================================
+// BOOT & INITIALIZATION
+// ============================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  initNav();
+  initSystem1();
+  initSystem2();
+  initSystem3();
+  initSystem4();
+  initSystem5();
+
+  // Mobile Menu Toggle Logic
+  const menuToggle = document.getElementById('menuToggle');
+  const header = document.querySelector('.header');
+  const navBtns = document.querySelectorAll('.nav-btn');
+
+  if (menuToggle && header) {
+    menuToggle.addEventListener('click', () => {
+      header.classList.toggle('nav-open');
+    });
+
+    // Close menu when clicking a link (mobile UX)
+    navBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        header.classList.remove('nav-open');
+      });
+    });
+  }
+});
+
+// ============================================================================
 // SYSTEM 04: CASCADE & INTERVENTION LAB
 // ============================================================================
 function initSystem4() {
