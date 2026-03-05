@@ -121,12 +121,16 @@ body {
   padding: 0 24px;
   height: 62px;
   background: linear-gradient(180deg,
-      rgba(12, 20, 14, 0.97) 0%,
-      rgba(9, 14, 10, 0.97) 100%);
+      rgba(12, 20, 14, 0.98) 0%,
+      rgba(9, 14, 10, 0.98) 100%);
   border-bottom: 1px solid var(--border-mid);
   box-shadow: 0 1px 0 rgba(0, 255, 156, 0.05), 0 4px 24px rgba(0, 0, 0, 0.5);
-  position: relative;
-  z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2000;
+  /* High z-index to stay above maps and overlays */
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
@@ -2908,6 +2912,26 @@ body {
   cursor: pointer;
   padding: 8px;
   z-index: 1001;
+  transition: all 0.2s ease;
+}
+
+.panel-toggle {
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+  padding: 8px 12px;
+  margin-right: 12px;
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hamburger-icon {
+  display: none;
+  color: var(--accent);
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 5px rgba(0, 255, 156, 0.3));
 }
 
 @media (max-width: 768px) {
@@ -2916,23 +2940,36 @@ body {
     margin-left: 8px;
   }
 
+  .hamburger-icon {
+    display: block !important;
+  }
+
+  .panel-toggle {
+    background: rgba(0, 255, 156, 0.08);
+    border: 1px solid rgba(0, 255, 156, 0.2);
+    box-shadow: 0 0 15px rgba(0, 255, 156, 0.1);
+  }
+
   .header-nav {
     position: fixed;
     top: 62px;
     left: 0;
     right: 0;
     bottom: 0;
-    background: var(--bg-surface);
+    background: rgba(4, 8, 6, 0.98);
+    /* Deeper dark for higher contrast */
+    backdrop-filter: blur(30px) saturate(1.5);
     flex-direction: column;
-    padding: 24px;
-    gap: 12px;
+    padding: 32px 24px;
+    gap: 16px;
     transform: translateX(100%);
-    transition: transform 0.3s ease;
-    z-index: 1000;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2100;
     overflow-y: auto;
     display: flex;
     justify-content: flex-start;
     border-top: 1px solid var(--border-mid);
+    width: 100% !important;
   }
 
   .header.nav-open .header-nav {
@@ -2941,15 +2978,17 @@ body {
 
   .nav-btn {
     width: 100%;
-    padding: 14px 20px;
+    padding: 18px 20px;
     justify-content: flex-start;
-    font-size: 0.95rem;
+    font-size: 1rem;
     border-radius: var(--r-md);
     background: var(--bg-card);
+    border: 1px solid var(--border-faint);
   }
 
   .nav-btn.active {
     background: var(--accent-dim);
+    border-color: var(--accent);
   }
 
   /* Hide status when menu is large or keep it? Let's keep it small at top */

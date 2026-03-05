@@ -210,16 +210,34 @@ updateClock();
 
 // ── Nav ─────────────────────────────────────────────────
 function initNav() {
-  document.querySelectorAll('.nav-btn').forEach(btn => {
+  const header = document.querySelector('.header');
+  const navBtns = document.querySelectorAll('.nav-btn');
+  const toggles = document.querySelectorAll('.menu-toggle');
+
+  if (!header) return;
+
+  // Handle Tab Navigation
+  navBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      navBtns.forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.system-panel').forEach(p => p.classList.remove('active'));
+
       btn.classList.add('active');
       const panelId = 'system' + btn.dataset.system;
       const targetPanel = document.getElementById(panelId);
-      if (targetPanel) targetPanel.classList.add('active');
 
-      // Trigger map resize to fix initialization in hidden containers
+      if (targetPanel) {
+        targetPanel.classList.add('active');
+        // Scroll to top of the panel on mobile
+        if (window.innerWidth <= 768) {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+
+      // Close mobile menu
+      header.classList.remove('nav-open');
+
+      // Resize maps
       if (btn.dataset.system === '1' && window._airnetMap) {
         setTimeout(() => window._airnetMap.resize(), 100);
       } else if (btn.dataset.system === '3' && window.trajMapInstance) {
@@ -230,14 +248,26 @@ function initNav() {
           window._s4MapAfter.resize();
         }, 100);
       }
-
-      // Close mobile menu if open
-      const header = document.querySelector('.header');
-      if (header) header.classList.remove('nav-open');
     });
   });
+
+  // Handle Hamburger Toggles
+  toggles.forEach(toggle => {
+    toggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      header.classList.toggle('nav-open');
+    });
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener('click', (e) => {
+    if (header.classList.contains('nav-open') && !header.contains(e.target)) {
+      header.classList.remove('nav-open');
+    }
+  });
 }
-initNav(); // Also call it immediately for static initialization
+initNav();
 
 // ── Ctrl btn toggles ────────────────────────────────────
 document.querySelectorAll('.panel-controls').forEach(grp => {
@@ -2465,26 +2495,13 @@ function matchZoneToRegion(zoneName, regionId) {
   return mapping[regionId]?.includes(zoneName) || false;
 }
 
-// ============================================================================
-// BOOT & INITIALIZATION
-// ============================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  // initNav() is now called at top level or here
+  // Navigation is initialized at top level
   initSystem1();
   initSystem2();
   initSystem3();
   initSystem4();
   initSystem5();
-
-  // Mobile Menu Toggle Logic
-  const menuToggle = document.getElementById('menuToggle');
-  const header = document.querySelector('.header');
-
-  if (menuToggle && header) {
-    menuToggle.addEventListener('click', () => {
-      header.classList.toggle('nav-open');
-    });
-  }
 });
 
 // ============================================================================
