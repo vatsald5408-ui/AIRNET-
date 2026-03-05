@@ -1,0 +1,30 @@
+# ── Dependencies ──────────────────────────────────────────
+node_modules/
+
+# ── Environment & Secrets ─────────────────────────────────
+# NEVER commit real API keys — use .env.example as a template
+.env
+
+# ── Database ──────────────────────────────────────────────
+# SQLite file is generated on first run; do not track it
+*.sqlite
+*.sqlite3
+*.db
+
+# ── Logs & Debug output ───────────────────────────────────
+*.log
+out.log
+temp_output.log
+policy_error.txt
+
+# ── OS & Editor artifacts ─────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# ── Build / temp ──────────────────────────────────────────
+dist/
+.cache/
+tmp/

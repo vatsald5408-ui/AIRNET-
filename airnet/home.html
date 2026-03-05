@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AirNet — Urban Atmospheric Intelligence</title>
+    <meta name="description"
+        content="City-scale AI infrastructure that transforms air pollution management into predictive, vulnerability-aware decision intelligence." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="home.css" />
+</head>
+
+<body>
+
+    <!-- ── Page transition overlay ── -->
+    <div class="page-transition" id="pageTransition"></div>
+
+    <!-- ── Noise grain texture ── -->
+    <canvas class="grain-canvas" id="grainCanvas"></canvas>
+
+    <!-- ── Radial vignette ── -->
+    <div class="vignette"></div>
+
+    <!-- ── Header ── -->
+    <header class="site-header" id="siteHeader">
+        <a href="/" class="header-logo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z" stroke="#00FF9C"
+                    stroke-width="1.5" />
+                <path d="M7 12c0-2.761 2.239-5 5-5s5 2.239 5 5" stroke="#00FF9C" stroke-width="1.5"
+                    stroke-linecap="round" />
+                <circle cx="12" cy="12" r="1.5" fill="#00FF9C" />
+            </svg>
+            <span class="logo-text">AIRNET</span>
+        </a>
+        <nav class="header-nav" aria-label="Primary">
+            <a href="#" class="nav-link">Platform</a>
+            <a href="#" class="nav-link">Research</a>
+            <a href="#" class="nav-link">Cities</a>
+        </nav>
+        <div class="header-actions">
+            <a href="/dashboard" class="header-dashboard-btn" id="headerDashBtn">Command System →</a>
+        </div>
+    </header>
+
+    <!-- ── Spline 3D scene (full viewport) ── -->
+    <div class="spline-wrap" id="splineWrap">
+        <script type="module">
+            import { Application } from 'https://unpkg.com/@splinetool/runtime@latest/build/runtime.js';
+            const canvas = document.getElementById('splineCanvas');
+            const app = new Application(canvas);
+
+            app.load('https://prod.spline.design/EKhRF229SrytYmRP/scene.splinecode')
+                .then(() => {
+                    // Refined performance fix: only set if method exists
+                    if (typeof app.setPixelRatio === 'function') {
+                        app.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
+                    }
+                    document.getElementById('splineWrap').classList.add('loaded');
+                })
+                .catch(() => {
+                    // Silently fail — background still looks good
+                    document.getElementById('splineWrap').classList.add('loaded');
+                });
+        </script>
+        <canvas id="splineCanvas"></canvas>
+    </div>
+
+    <!-- ── Hero text block ── -->
+    <main class="hero" id="hero">
+        <div class="hero-content" id="heroContent">
+
+            <!-- Live status chip -->
+            <div class="live-chip" id="liveChip">
+                <span class="live-dot"></span>
+                <span>Live atmospheric feed · 12 cities</span>
+            </div>
+
+            <!-- Headline -->
+            <h1 class="hero-headline" id="heroHeadline">
+                <span class="line line-1">The city breathes.</span>
+                <span class="line line-2">We read every signal.</span>
+            </h1>
+
+            <!-- Subtext -->
+            <p class="hero-sub" id="heroSub">
+                AirNet is a city-scale AI infrastructure that transforms air pollution management
+                from reactive monitoring into predictive, vulnerability-aware, cascade-modeled
+                decision intelligence.
+            </p>
+
+            <!-- CTA -->
+            <div class="cta-wrap" id="ctaWrap">
+                <button class="cta-btn" id="enterBtn" aria-label="Enter Command System">
+                    <span class="cta-text">Enter Command System</span>
+                    <span class="cta-arrow" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                </button>
+
+                <!-- Scroll hint -->
+                <div class="scroll-hint" id="scrollHint" aria-hidden="true">
+                    <div class="scroll-line"></div>
+                    <span>scroll</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ── Minimal bottom data strip ── -->
+    <footer class="data-strip" id="dataStrip">
+        <div class="strip-item">
+            <span class="strip-val">2.4M</span>
+            <span class="strip-lbl">sensors active</span>
+        </div>
+        <div class="strip-divider"></div>
+        <div class="strip-item">
+            <span class="strip-val">99.7%</span>
+            <span class="strip-lbl">uptime</span>
+        </div>
+        <div class="strip-divider"></div>
+        <div class="strip-item">
+            <span class="strip-val">38ms</span>
+            <span class="strip-lbl">avg latency</span>
+        </div>
+        <div class="strip-divider"></div>
+        <div class="strip-item">
+            <span class="strip-val">12</span>
+            <span class="strip-lbl">city deployments</span>
+        </div>
+    </footer>
+
+    <!-- spacer to push footer below the fixed fold -->
+    <div style="height: 100vh;"></div>
+
+    <!-- ════════════════════ SITE FOOTER ════════════════════ -->
+    <footer class="app-footer">
+        <div class="footer-inner">
+            <div class="footer-about">
+                <h4>About AirNet</h4>
+                <p>AirNet is an urban atmospheric intelligence infrastructure transforming air pollution management into
+                    predictive, vulnerability-aware, and cascade-modeled decision-making.</p>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <p>Email: <a href="mailto:contactairnet@gmail.com">contactairnet@gmail.com</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="home.js"></script>
+</body>
+
+</html>

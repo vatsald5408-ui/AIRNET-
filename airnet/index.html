@@ -1,0 +1,955 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AirNet — Urban Atmospheric Intelligence &amp; Risk Command</title>
+  <meta name="description"
+    content="AirNet is a city-scale AI-powered atmospheric intelligence infrastructure transforming air pollution management into predictive, vulnerability-aware, cascade-modeled decision-making." />
+  <meta name="theme-color" content="#071A12" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link href='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css' rel='stylesheet' />
+  <script src='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js'></script>
+</head>
+
+<body>
+
+  <!-- ════════════════════ HEADER ════════════════════ -->
+  <header class="header">
+    <a href="/" class="header-brand">
+      <div class="brand-icon">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="12" stroke="url(#gGrad)" stroke-width="1.5" fill="none" />
+          <circle cx="14" cy="14" r="7" stroke="url(#gGrad)" stroke-width="1" fill="none" opacity="0.6" />
+          <circle cx="14" cy="14" r="3" fill="url(#gGrad)" />
+          <defs>
+            <linearGradient id="gGrad" x1="0" y1="0" x2="28" y2="28">
+              <stop offset="0%" stop-color="#00FF9C" />
+              <stop offset="100%" stop-color="#00D4A0" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div>
+        <span class="brand-name">AirNet</span>
+        <span class="brand-sub">Urban Atmospheric Intelligence</span>
+      </div>
+    </a>
+
+    <nav class="header-nav" id="mainNav">
+      <button class="nav-btn active" data-system="1" id="navBtn1">
+        <span class="nav-dot"></span>Live Atmosphere
+      </button>
+      <button class="nav-btn" data-system="2" id="navBtn2">
+        <span class="nav-dot"></span>Forecast Lab
+      </button>
+      <button class="nav-btn" data-system="3" id="navBtn3">
+        <span class="nav-dot"></span>Source Intelligence
+      </button>
+      <button class="nav-btn" data-system="4" id="navBtn4">
+        <span class="nav-dot"></span>Cascade &amp; Intervention
+      </button>
+      <button class="nav-btn" data-system="5" id="navBtn5">
+        <span class="nav-dot"></span>Policy Recommendation
+      </button>
+    </nav>
+
+    <div class="header-status">
+      <div class="status-dot live"></div>
+      <span class="status-text">LIVE</span>
+      <span class="status-time" id="liveTime">--:--:--</span>
+    </div>
+  </header>
+
+  <!-- ════════════════════ MAIN CONTENT ════════════════════ -->
+  <main class="main-content">
+
+    <!-- ══════════════ SYSTEM 1: LIVE ATMOSPHERIC VIEW ══════════════ -->
+    <section class="system-panel active" id="system1">
+      <div class="panel-header">
+        <div class="panel-title-row">
+          <span class="system-num">01</span>
+          <div>
+            <h2 class="panel-title">Live Atmospheric View</h2>
+            <p class="panel-desc">Real-time situational awareness across all city zones</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- City metrics bar -->
+      <div class="metrics-bar">
+        <div class="metric-chip">
+          <span class="metric-label">City Avg AQI</span>
+          <span class="metric-value" id="cityAvgAQI">--</span>
+        </div>
+        <div class="metric-chip">
+          <span class="metric-label">Most Stressed Zone</span>
+          <span class="metric-value highlight" id="stressedZone">--</span>
+        </div>
+        <div class="metric-chip">
+          <span class="metric-label">Spike Probability</span>
+          <span class="metric-value" id="spikePct">--</span>
+        </div>
+        <div class="metric-chip">
+          <span class="metric-label">Active Zones</span>
+          <span class="metric-value" id="activeZonesCount">24</span>
+        </div>
+        <div class="metric-chip">
+          <span class="metric-label">Avg Wind Speed</span>
+          <span class="metric-value" id="avgWindSpeed">8.4 km/h <span style="color:var(--accent)">↗</span></span>
+        </div>
+      </div>
+
+      <div class="s1-grid">
+        <!-- AQI Map Canvas -->
+        <div class="card s1-map-card">
+          <div class="card-header" style="padding-left: 16px;">
+            <span class="card-title">Delhi Live AQI Map</span>
+            <span class="card-badge">Urban Intelligence · Station Data</span>
+          </div>
+
+          <!-- Layer controls top-right -->
+          <div class="map-layer-controls" id="mapLayerControls">
+            <button class="layer-btn active" data-layer="aqi" id="layerBtnAQI">AQI Heat</button>
+            <button class="layer-btn" data-layer="stress" id="layerBtnStress">Stress</button>
+            <button class="layer-btn" data-layer="vuln" id="layerBtnVuln">Vulnerability</button>
+            <button class="layer-btn" data-layer="source" id="layerBtnSource">Attribution</button>
+            <button class="layer-btn map-3d-toggle" id="toggle3DBtn" title="Toggle 3D AQI columns">3D</button>
+          </div>
+
+          <!-- Canvas wrapper with risk density and legend pill -->
+          <div class="map-canvas-wrap">
+            <!-- Risk density indicator top-left -->
+            <div class="map-risk-density" id="mapRiskDensity">
+              <span class="risk-density-label">Active Zones</span>
+              <span class="risk-density-value" id="mapStressCount">--</span>
+              <div class="risk-density-bar">
+                <div class="risk-density-fill" id="riskDensityFill" style="width:0%"></div>
+              </div>
+            </div>
+
+            <div id="delhiMap" style="width:100%;height:450px;border-radius:10px;display:block;"></div>
+
+            <!-- Floating legend pill -->
+            <div class="map-legend-pill" id="mapLegendPill">
+              <div class="legend-pill-tabs">
+                <button class="legend-tab active" id="legendTabAQI">AQI</button>
+                <button class="legend-tab" id="legendTabStress">Stress</button>
+              </div>
+              <div class="legend-pill-body" id="legendPillAQI">
+                <div class="legend-pill-item"><span class="lpill-dot"
+                    style="background:#22C55E"></span><span>Good</span></div>
+                <div class="legend-pill-item"><span class="lpill-dot"
+                    style="background:#FFB547"></span><span>Moderate</span></div>
+                <div class="legend-pill-item"><span class="lpill-dot"
+                    style="background:#FF8C42"></span><span>Poor</span></div>
+                <div class="legend-pill-item"><span class="lpill-dot"
+                    style="background:#FF4D4D"></span><span>V.Poor</span></div>
+                <div class="legend-pill-item"><span class="lpill-dot"
+                    style="background:#C026D3"></span><span>Hazardous</span></div>
+              </div>
+              <div class="legend-pill-body hidden" id="legendPillStress">
+                <div class="legend-pill-item"><span class="lpill-dot" style="background:#00FF9C"></span><span>Low
+                    (&lt;30)</span></div>
+                <div class="legend-pill-item"><span class="lpill-dot"
+                    style="background:#FFB547"></span><span>Moderate</span></div>
+                <div class="legend-pill-item"><span class="lpill-dot" style="background:#FF4D4D"></span><span>High
+                    (&gt;70)</span></div>
+              </div>
+            </div>
+
+            <!-- Hover tooltip -->
+            <div class="map-zone-tooltip" id="mapZoneTooltip">
+              <div class="tooltip-name" id="ttName">—</div>
+              <div class="tooltip-grid">
+                <div class="tt-kv"><span class="tt-k">AQI</span><span class="tt-v" id="ttAQI">—</span></div>
+                <div class="tt-kv"><span class="tt-k">Stress</span><span class="tt-v" id="ttStress">—</span></div>
+                <div class="tt-kv"><span class="tt-k">Spike Prob.</span><span class="tt-v" id="ttSpike">—</span></div>
+                <div class="tt-kv"><span class="tt-k">Source</span><span class="tt-v" id="ttSource">—</span></div>
+                <div class="tt-kv"><span class="tt-k">Vulnerability</span><span class="tt-v" id="ttVuln">—</span></div>
+              </div>
+              <div id="ttAISection"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div class="s1-right">
+          <!-- ASI Gauge -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">ASI: <span id="asiZoneName" style="color:var(--accent)">NCR Average</span></span>
+              <span class="card-badge proprietary">Proprietary</span>
+            </div>
+            <div class="asi-gauge-wrap">
+              <canvas id="asiGauge" width="200" height="120"></canvas>
+              <div class="asi-score-overlay">
+                <span class="asi-value" id="asiValue">74</span>
+                <span class="asi-label">/ 100</span>
+              </div>
+            </div>
+            <div class="asi-components">
+              <div class="asi-comp-row">
+                <span>Current AQI</span>
+                <div class="mini-bar">
+                  <div class="mini-fill" id="asiAqiFill" style="width:82%;background:#FF4D4D"></div>
+                </div>
+                <span id="asiAqiVal">82</span>
+              </div>
+              <div class="asi-comp-row">
+                <span>Duration</span>
+                <div class="mini-bar">
+                  <div class="mini-fill" id="asiDurFill" style="width:65%;background:#FF8C42"></div>
+                </div>
+                <span id="asiDurVal">65</span>
+              </div>
+              <div class="asi-comp-row">
+                <span>Spike Prob.</span>
+                <div class="mini-bar">
+                  <div class="mini-fill" id="asiSpikeFill" style="width:73%;background:#FFB547"></div>
+                </div>
+                <span id="asiSpikeVal">73</span>
+              </div>
+              <div class="asi-comp-row">
+                <span>Vulnerability</span>
+                <div class="mini-bar">
+                  <div class="mini-fill" id="asiVulnFill" style="width:58%;background:#00FF9C"></div>
+                </div>
+                <span id="asiVulnVal">58</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk Timer -->
+          <div class="card risk-timer-card">
+            <div class="card-header">
+              <span class="card-title">Risk Timer</span>
+              <span class="card-badge urgent">URGENT</span>
+            </div>
+            <p class="risk-timer-desc">Countdown to projected High AQI (≥ 201)</p>
+            <div class="risk-countdown" id="riskCountdown">
+              <div class="countdown-unit">
+                <span class="countdown-val" id="cdHours">04</span>
+                <span class="countdown-lbl">HRS</span>
+              </div>
+              <span class="countdown-sep">:</span>
+              <div class="countdown-unit">
+                <span class="countdown-val" id="cdMins">37</span>
+                <span class="countdown-lbl">MIN</span>
+              </div>
+              <span class="countdown-sep">:</span>
+              <div class="countdown-unit">
+                <span class="countdown-val" id="cdSecs">22</span>
+                <span class="countdown-lbl">SEC</span>
+              </div>
+            </div>
+            <div class="risk-urgency-bar">
+              <div class="risk-urgency-fill" id="riskFill" style="width:62%"></div>
+            </div>
+            <p class="risk-urgency-label">Urgency Level: <span style="color:#FF4D4D">HIGH</span></p>
+          </div>
+
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════ SYSTEM 2: FORECAST LAB ══════════════ -->
+    <section class="system-panel" id="system2">
+      <div class="panel-header">
+        <div class="panel-title-row">
+          <span class="system-num">02</span>
+          <div>
+            <h2 class="panel-title">Forecast Lab</h2>
+            <p class="panel-desc">Short-term atmospheric foresight and spike prediction</p>
+          </div>
+        </div>
+        <div class="panel-controls">
+          <button class="ctrl-btn active" id="fc6h">6h</button>
+          <button class="ctrl-btn" id="fc12h">12h</button>
+          <button class="ctrl-btn" id="fc24h">24h</button>
+        </div>
+      </div>
+
+      <div class="s2-grid">
+        <!-- Forecast chart -->
+        <div class="card s2-forecast-card">
+          <div class="card-header">
+            <span class="card-title">Hyperlocal AQI Forecast</span>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <select id="forecastZoneSelector" class="form-select"
+                style="background:#071a12; color:#00FF9C; border:1px solid rgba(0,255,156,0.3); border-radius:4px; padding:2px 6px; font-size:0.75rem; font-family:inherit; cursor:pointer; outline:none;">
+                <option value="">NCR Average (Global)</option>
+              </select>
+              <span class="card-badge">95% Confidence Interval</span>
+            </div>
+          </div>
+          <canvas id="forecastChart" height="155"></canvas>
+        </div>
+
+        <!-- Spike probability -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Spike Probability Engine</span>
+          </div>
+          <div class="spike-zones" id="spikeZones" style="padding-right: 5px;">
+          </div>
+        </div>
+
+
+
+        <!-- Consequence of inaction -->
+        <div class="card s2-inaction-card">
+          <div class="card-header">
+            <span class="card-title">Consequence-of-Inaction Mode</span>
+          </div>
+          <div class="inaction-toggle-row">
+            <span>Apply no intervention for 12h…</span>
+          </div>
+          <div class="inaction-results" id="inactionResults">
+            <div class="inaction-metric">
+              <span class="inaction-lbl">Projected AQI</span>
+              <span class="inaction-val" id="simProjAQI" style="color:#C026D3">314</span>
+            </div>
+            <div class="inaction-metric">
+              <span class="inaction-lbl">Health Risk</span>
+              <span class="inaction-val" id="simProjRisk" style="color:#FF4D4D">CRITICAL</span>
+            </div>
+            <div class="inaction-metric">
+              <span class="inaction-lbl">Stress Index</span>
+              <span class="inaction-val" id="simProjStress" style="color:#FF4D4D">96 / 100</span>
+            </div>
+            <div class="inaction-metric">
+              <span class="inaction-lbl">Pop. Exposed</span>
+              <span class="inaction-val" id="simProjPop">2.4M</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════ SYSTEM 3: SOURCE & VULNERABILITY INTELLIGENCE ══════════════ -->
+    <section class="system-panel" id="system3">
+      <div class="panel-header">
+        <div class="panel-title-row">
+          <span class="system-num">03</span>
+          <div>
+            <h2 class="panel-title">Source &amp; Vulnerability Intelligence</h2>
+            <p class="panel-desc">Impact targeting through source attribution and vulnerability mapping</p>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <select id="sys3GlobalZoneSelector" class="form-select"
+            style="background:rgba(10, 36, 25, 0.4); color:#c4faea; border:1px solid rgba(0,255,156,0.15); border-radius:20px; padding:6px 14px; font-size:0.9rem; font-family:inherit; cursor:pointer; outline:none; max-width: 200px; backdrop-filter: blur(8px); box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: all 0.3s ease;">
+          </select>
+        </div>
+      </div>
+
+      <div class="s3-grid">
+        <!-- Source attribution -->
+        <div class="card s3-source-card">
+          <div class="card-header">
+            <span class="card-title">Dynamic Source Attribution</span>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <span class="card-badge">Confidence: 87%</span>
+            </div>
+          </div>
+          <div class="source-chart-row">
+            <canvas id="sourceDonut" width="160" height="160"></canvas>
+            <div class="source-legend" id="sourceLegend"></div>
+          </div>
+          <div class="source-bars" id="sourceBars"></div>
+        </div>
+
+        <!-- Wind back-trajectory -->
+        <div class="card s3-traj-card">
+          <div class="card-header">
+            <span class="card-title">Wind Back-Trajectory Map</span>
+            <span class="card-badge">Trajectory Model</span>
+          </div>
+          <div style="position: relative;">
+            <div id="trajectoryMap"
+              style="width:100%;height:360px;border-radius:10px;overflow:hidden;background:#071A12;display:block;">
+            </div>
+            <!-- Compass Overlay -->
+            <div
+              style="position: absolute; bottom: 10px; right: 10px; pointer-events: none; z-index: 10; opacity: 0.85; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
+              <svg width="45" height="45" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="46" fill="rgba(7, 26, 18, 0.7)" stroke="#00FF9C" stroke-width="1.5"
+                  stroke-dasharray="2 4" />
+                <path d="M50 15 L50 85 M15 50 L85 50" stroke="#00FF9C" stroke-width="1" opacity="0.4" />
+                <polygon points="50,6 45,16 55,16" fill="#00FF9C" />
+                <text x="50" y="28" fill="#00FF9C" font-size="14" font-family="Inter, sans-serif" font-weight="bold"
+                  text-anchor="middle">N</text>
+                <text x="50" y="82" fill="#00FF9C" font-size="12" font-family="Inter, sans-serif" opacity="0.7"
+                  text-anchor="middle">S</text>
+                <text x="76" y="54" fill="#00FF9C" font-size="12" font-family="Inter, sans-serif" opacity="0.7"
+                  text-anchor="middle">E</text>
+                <text x="24" y="54" fill="#00FF9C" font-size="12" font-family="Inter, sans-serif" opacity="0.7"
+                  text-anchor="middle">W</text>
+              </svg>
+            </div>
+          </div>
+          <div class="traj-label">Showing wind-driven propagation vectors across NCR</div>
+        </div>
+
+        <!-- Vulnerability heat index -->
+        <div class="card s3-vuln-card">
+          <div class="card-header">
+            <span class="card-title">Source Particle Concenteration</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px;" id="vulnGrid">
+            <!-- Pollutant cards injected by JS -->
+          </div>
+        </div>
+
+        <!-- Affected Infrastructure -->
+        <div class="card s3-infra-card">
+          <div class="card-header">
+            <span class="card-title">Affected Infrastructure</span>
+            <span class="card-badge" id="infraZoneBadge">Selected Zone</span>
+          </div>
+          <div class="infra-list" id="infraList" style="min-height: 150px; position:relative;">
+            <div style="text-align:center; padding: 20px; color: var(--text-muted); font-size: 0.85rem;">Select a zone
+              to fetch map data...</div>
+          </div>
+        </div>
+
+
+
+      </div>
+    </section>
+
+    <!-- ══════════════ SYSTEM 4: CASCADE & INTERVENTION LAB ══════════════ -->
+    <section class="system-panel" id="system4">
+      <div class="panel-header">
+        <div class="panel-title-row">
+          <span class="system-num">04</span>
+          <div>
+            <h2 class="panel-title">Cascade &amp; Intervention Lab</h2>
+            <p class="panel-desc">Strategic simulation and intervention modeling</p>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <select id="sys4GlobalZoneSelector" class="form-select"
+            style="background:rgba(10, 36, 25, 0.4); color:#c4faea; border:1px solid rgba(0,255,156,0.15); border-radius:20px; padding:6px 14px; font-size:0.9rem; font-family:inherit; cursor:pointer; outline:none; max-width: 200px; backdrop-filter: blur(8px); box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: all 0.3s ease;">
+          </select>
+          <button class="sim-btn primary" id="runCascade">▶ Run Simulation</button>
+        </div>
+      </div>
+
+      <div class="s4-grid">
+        <!-- Intervention controls -->
+        <div class="card s4-controls-card">
+          <div class="card-header">
+            <span class="card-title">Intervention Controls</span>
+          </div>
+          <div class="intervention-controls" id="interventionControls">
+            <div class="int-ctrl-group">
+              <div class="int-ctrl-header">
+                <span class="int-ctrl-name">Traffic Flow Reduction</span>
+                <span class="int-ctrl-value" id="valTraffic">0%</span>
+              </div>
+              <input type="range" id="slTraffic" class="int-slider" min="0" max="100" value="0">
+            </div>
+            <div class="int-ctrl-group">
+              <div class="int-ctrl-header">
+                <span class="int-ctrl-name">Industrial Emission Cap</span>
+                <span class="int-ctrl-value" id="valIndustry">0%</span>
+              </div>
+              <input type="range" id="slIndustry" class="int-slider" min="0" max="100" value="0">
+            </div>
+            <div class="int-ctrl-group">
+              <div class="int-ctrl-header">
+                <span class="int-ctrl-name">Heavy Vehicle Restriction</span>
+                <span class="int-ctrl-value" id="valHeavyVeh">0%</span>
+              </div>
+              <input type="range" id="slHeavyVeh" class="int-slider" min="0" max="100" value="0">
+            </div>
+            <div class="int-ctrl-group">
+              <div class="int-ctrl-header">
+                <span class="int-ctrl-name">Dust Mitigation Intensity</span>
+                <span class="int-ctrl-value" id="valDust">0%</span>
+              </div>
+              <input type="range" id="slDust" class="int-slider" min="0" max="100" value="0">
+            </div>
+            <div class="toggle-row" style="margin-top: 10px;">
+              <span class="toggle-label">Complete Construction Halt</span>
+              <div class="toggle-sw" id="tgConstruction"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Before/After maps -->
+        <div class="card s4-split-card">
+          <div class="card-header">
+            <span class="card-title">Before / After AQI Impact Map</span>
+            <span class="card-badge">Run simulation to compare</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div>
+              <div
+                style="font-size:0.66rem;font-weight:600;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-muted);margin-bottom:7px;">
+                BASELINE</div>
+              <div id="beforeMap"
+                style="width:100%;height:250px;border-radius:10px;display:block;background:#071A12;overflow:hidden;position:relative;">
+              </div>
+            </div>
+            <div>
+              <div
+                style="font-size:0.66rem;font-weight:600;text-transform:uppercase;letter-spacing:0.09em;color:var(--aqi-good);margin-bottom:7px;">
+                INTERVENED</div>
+              <div id="afterMap"
+                style="width:100%;height:250px;border-radius:10px;display:block;background:#071A12;overflow:hidden;position:relative;">
+              </div>
+            </div>
+          </div>
+          <div id="cascadeResult" style="margin-top:14px;display:none;">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px;">
+              <div
+                style="text-align:center;padding:12px;background:var(--bg-surface);border-radius:12px;border:1px solid var(--border);">
+                <div
+                  style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);margin-bottom:4px;">
+                  AQI Drop</div>
+                <div id="crAqiDrop"
+                  style="font-size:1.35rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--aqi-good);">
+                </div>
+              </div>
+              <div
+                style="text-align:center;padding:12px;background:var(--bg-surface);border-radius:12px;border:1px solid var(--border);">
+                <div
+                  style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);margin-bottom:4px;">
+                  Health Benefit</div>
+                <div id="crHealth"
+                  style="font-size:1.35rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--accent);">
+                </div>
+              </div>
+              <div
+                style="text-align:center;padding:12px;background:var(--bg-surface);border-radius:12px;border:1px solid var(--border);">
+                <div
+                  style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);margin-bottom:4px;">
+                  Disruption</div>
+                <div id="crDisruption"
+                  style="font-size:1.35rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--aqi-moderate);">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scenario table -->
+        <div class="card s4-scenario-card">
+          <div class="card-header">
+            <span class="card-title">Scenario Comparison</span>
+            <button class="mini-btn" id="saveScenario">+ Save Current</button>
+          </div>
+          <div class="scenario-table-wrap">
+            <table class="scenario-table" id="scenarioTable">
+              <thead>
+                <tr>
+                  <th>Scenario</th>
+                  <th>Zone</th>
+                  <th>AQI Drop</th>
+                  <th>Health Benefit</th>
+                  <th>Disruption</th>
+                  <th>Efficiency</th>
+                </tr>
+              </thead>
+              <tbody id="scenarioTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════ SYSTEM 5: POLICY RECOMMENDATION ══════════════ -->
+    <section class="system-panel" id="system5">
+      <div class="panel-header">
+        <div class="panel-title-row">
+          <span class="system-num">05</span>
+          <div>
+            <h2 class="panel-title">Policy Recommendation</h2>
+            <p class="panel-desc">Automated decision intelligence powered by multi-objective optimization</p>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <!-- AI engine indicator -->
+          <div id="aiEnginesContainer" style="display:flex; gap:10px;">
+            <div id="aiEngineGemini" title="Gemini AI Status" style="display:flex;align-items:center;gap:6px;padding:5px 12px;
+                     background:rgba(10,36,25,0.5);border:1px solid rgba(0,255,156,0.15);
+                     border-radius:20px;font-size:0.78rem;color:#c4faea;
+                     backdrop-filter:blur(8px);cursor:default;">
+              <span id="geminiDot" style="width:8px;height:8px;border-radius:50%;background:#888;
+                       display:inline-block;transition:background 0.4s;"></span>
+              <span id="geminiLabel">Gemini checking...</span>
+            </div>
+            <div id="aiEngineFallback" title="Local Fallback Engine Status" style="display:flex;align-items:center;gap:6px;padding:5px 12px;
+                     background:rgba(10,36,25,0.5);border:1px solid rgba(0,255,156,0.15);
+                     border-radius:20px;font-size:0.78rem;color:#c4faea;
+                     backdrop-filter:blur(8px);cursor:default;">
+              <span id="fallbackDot" style="width:8px;height:8px;border-radius:50%;background:#888;
+                       display:inline-block;transition:background 0.4s;"></span>
+              <span id="fallbackLabel">Fallback checking...</span>
+            </div>
+          </div>
+          <select id="sys5GlobalZoneSelector" class="form-select"
+            style="background:rgba(10, 36, 25, 0.4); color:#c4faea; border:1px solid rgba(0,255,156,0.15); border-radius:20px; padding:6px 14px; font-size:0.9rem; font-family:inherit; cursor:pointer; outline:none; max-width: 200px; backdrop-filter: blur(8px); box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: all 0.3s ease;">
+          </select>
+        </div>
+      </div>
+
+      <div class="s5-grid">
+        <!-- Recommended Action -->
+        <div class="card s5-action-card">
+          <div class="card-header">
+            <span class="card-title">Recommended Action</span>
+            <span class="card-badge proprietary">TOP PRIORITY</span>
+          </div>
+          <div class="ai-action-body" id="aiActionBody"></div>
+        </div>
+
+        <!-- Scatter plot -->
+        <div class="card s5-scatter-card">
+          <div class="card-header">
+            <span class="card-title">Impact vs Disruption Trade-off</span>
+          </div>
+          <canvas id="scatterPlot" height="260"></canvas>
+        </div>
+
+        <!-- Ranked recommendations -->
+        <div class="card s5-ranked-card">
+          <div class="card-header">
+            <span class="card-title">Ranked Intervention Recommendations</span>
+          </div>
+          <div class="ranked-list" id="rankedList"></div>
+        </div>
+
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ════════════════════ LIVE API STATUS FOOTER ════════════════════ -->
+  <footer class="api-footer">
+
+    <!-- Header row -->
+    <div class="api-footer-header">
+      <div class="api-footer-title">
+        <span class="api-footer-dot pulse-dot"></span>
+        Live Data Feed Monitor
+      </div>
+      <div class="api-footer-meta">
+        <span id="apiFooterZoneCount">— zones</span>
+        <span class="api-footer-sep">·</span>
+        <span>Auto-refreshes every 30s</span>
+        <span class="api-footer-sep">·</span>
+        <span id="apiFooterLastSync">Syncing…</span>
+      </div>
+    </div>
+
+    <!-- API cards row -->
+    <div class="api-cards-row" id="apiCardsRow">
+
+      <!-- WAQI -->
+      <div class="api-card" id="apiCard-waqi">
+        <div class="api-card-top">
+          <span class="api-status-dot" id="apiDot-waqi"></span>
+          <span class="api-name">WAQI</span>
+          <span class="api-latency" id="apiLat-waqi">—</span>
+        </div>
+        <div class="api-url">api.waqi.info / map/bounds</div>
+        <div class="api-feeds">
+          <span class="feed-tag">AQI</span>
+          <span class="feed-tag">PM2.5</span>
+          <span class="feed-tag">PM10</span>
+          <span class="feed-tag">NO2</span>
+          <span class="feed-tag">Wind</span>
+          <span class="feed-tag">20 Zones</span>
+        </div>
+        <div class="api-card-footer-row">
+          <span class="api-card-label">World Air Quality Index · CPCB/DPCC</span>
+        </div>
+      </div>
+
+      <!-- Gemini AI -->
+      <div class="api-card" id="apiCard-gemini">
+        <div class="api-card-top">
+          <span class="api-status-dot" id="apiDot-gemini"></span>
+          <span class="api-name">Gemini AI</span>
+          <span class="api-latency" id="apiLat-gemini">—</span>
+        </div>
+        <div class="api-url">generativelanguage.googleapis.com</div>
+        <div class="api-feeds">
+          <span class="feed-tag">Zone Stress</span>
+          <span class="feed-tag">Spike %</span>
+          <span class="feed-tag">Policy Text</span>
+          <span class="feed-tag">Vuln Index</span>
+        </div>
+        <div class="api-card-footer-row">
+          <span class="api-card-label">Google · gemini-2.5-flash</span>
+        </div>
+      </div>
+
+      <!-- Open-Meteo -->
+      <div class="api-card" id="apiCard-meteo">
+        <div class="api-card-top">
+          <span class="api-status-dot" id="apiDot-meteo"></span>
+          <span class="api-name">Open-Meteo</span>
+          <span class="api-latency" id="apiLat-meteo">—</span>
+        </div>
+        <div class="api-url">air-quality-api.open-meteo.com</div>
+        <div class="api-feeds">
+          <span class="feed-tag">24h AQI Forecast</span>
+          <span class="feed-tag">US-AQI</span>
+          <span class="feed-tag">Hourly</span>
+        </div>
+        <div class="api-card-footer-row">
+          <span class="api-card-label">Open-Meteo · Free Air Quality API</span>
+        </div>
+      </div>
+
+      <!-- Overpass / OSM -->
+      <div class="api-card" id="apiCard-overpass">
+        <div class="api-card-top">
+          <span class="api-status-dot" id="apiDot-overpass"></span>
+          <span class="api-name">Overpass / OSM</span>
+          <span class="api-latency" id="apiLat-overpass">—</span>
+        </div>
+        <div class="api-url">overpass-api.de / interpreter</div>
+        <div class="api-feeds">
+          <span class="feed-tag">Schools</span>
+          <span class="feed-tag">Hospitals</span>
+          <span class="feed-tag">Clinics</span>
+          <span class="feed-tag">Nursing Homes</span>
+        </div>
+        <div class="api-card-footer-row">
+          <span class="api-card-label">OpenStreetMap · Zone-specific bounding boxes</span>
+        </div>
+      </div>
+
+      <!-- AirNet Backend -->
+      <div class="api-card" id="apiCard-backend">
+        <div class="api-card-top">
+          <span class="api-status-dot" id="apiDot-backend"></span>
+          <span class="api-name">AirNet API</span>
+          <span class="api-latency" id="apiLat-backend">—</span>
+        </div>
+        <div class="api-url">localhost:4000 / api/v1</div>
+        <div class="api-feeds">
+          <span class="feed-tag">Sensor DB</span>
+          <span class="feed-tag">Policy Engine</span>
+          <span class="feed-tag">Simulation</span>
+          <span class="feed-tag">Hotspots</span>
+          <span class="feed-tag">Trends</span>
+        </div>
+        <div class="api-card-footer-row">
+          <span class="api-card-label">Node.js · SQLite · Express</span>
+        </div>
+      </div>
+
+      <!-- Map tiles -->
+      <div class="api-card" id="apiCard-tiles">
+        <div class="api-card-top">
+          <span class="api-status-dot" id="apiDot-tiles"></span>
+          <span class="api-name">CARTO Tiles</span>
+          <span class="api-latency" id="apiLat-tiles">—</span>
+        </div>
+        <div class="api-url">basemaps.cartocdn.com</div>
+        <div class="api-feeds">
+          <span class="feed-tag">Map Style</span>
+          <span class="feed-tag">Vector Tiles</span>
+          <span class="feed-tag">Dark Matter</span>
+        </div>
+        <div class="api-card-footer-row">
+          <span class="api-card-label">CARTO · MapLibre GL renderer</span>
+        </div>
+      </div>
+
+    </div><!-- /api-cards-row -->
+
+    <!-- Bottom strip -->
+    <div class="api-footer-strip">
+      <span>AirNet — Urban Atmospheric Intelligence</span>
+      <span class="api-footer-sep">·</span>
+      <a href="mailto:contactairnet@gmail.com"
+        style="color:rgba(0,255,156,0.45);text-decoration:none;">contactairnet@gmail.com</a>
+      <span class="api-footer-sep">·</span>
+      <span id="apiFooterTime"></span>
+    </div>
+
+  </footer>
+
+  <!-- Decorative leaf background -->
+  <div class="leaf-bg" aria-hidden="true"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+  <script src="apiClient.js"></script>
+
+  <!-- ── Live API Status Footer Pinger ── -->
+  <script>
+    (function () {
+      const WAQI_KEY = '819597f7fb4c76b837a827a990bd5817b0a18a23';
+
+      // Definitions for each API card
+      const APIS = [
+        {
+          id: 'waqi',
+          ping: () => fetch(`https://api.waqi.info/feed/delhi/?token=${WAQI_KEY}`, { signal: AbortSignal.timeout(8000) }),
+          slow: 3000
+        },
+        {
+          id: 'gemini',
+          // Lightweight: just check if the models endpoint responds (no auth needed for list)
+          ping: () => fetch('https://generativelanguage.googleapis.com/v1beta/models?key=' + WAQI_KEY.slice(0, 5) + 'XXXXX', { signal: AbortSignal.timeout(6000) }),
+          slow: 2000,
+          allowCodes: [400, 403] // non-2xx but means endpoint is live
+        },
+        {
+          id: 'meteo',
+          ping: () => fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=28.61&longitude=77.20&hourly=us_aqi&forecast_days=1', { signal: AbortSignal.timeout(8000) }),
+          slow: 3500
+        },
+        {
+          id: 'overpass',
+          ping: () => fetch('https://overpass-api.de/api/status', { signal: AbortSignal.timeout(8000) }),
+          slow: 5000,
+          allowCodes: [200]
+        },
+        {
+          id: 'backend',
+          ping: () => fetch('/api/v1/health', { signal: AbortSignal.timeout(4000) }),
+          slow: 1000
+        },
+        {
+          id: 'tiles',
+          ping: () => fetch('https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json', { signal: AbortSignal.timeout(6000) }),
+          slow: 2500
+        }
+      ];
+
+      function setDot(id, state, latency) {
+        const dot = document.getElementById('apiDot-' + id);
+        const lat = document.getElementById('apiLat-' + id);
+        if (!dot) return;
+        dot.className = 'api-status-dot ' + state;
+        if (lat) lat.textContent = latency != null ? latency + 'ms' : '—';
+      }
+
+      async function pingOne(api) {
+        setDot(api.id, 'pinging', null);
+        const t0 = performance.now();
+        try {
+          const res = await api.ping();
+          const ms = Math.round(performance.now() - t0);
+          const ok = res.ok || (api.allowCodes && api.allowCodes.includes(res.status));
+          if (ok || api.allowCodes) {
+            setDot(api.id, ms > api.slow ? 'slow' : 'ok', ms);
+          } else {
+            setDot(api.id, 'error', ms);
+          }
+        } catch {
+          setDot(api.id, 'error', null);
+        }
+      }
+
+      function pingAll() {
+        APIS.forEach(api => pingOne(api));
+
+        // Update zone count from live data
+        const zc = document.getElementById('apiFooterZoneCount');
+        if (zc) {
+          const n = (window.zones || []).length;
+          zc.textContent = n ? n + ' zones live' : '— zones';
+        }
+
+        // Last sync time
+        const ls = document.getElementById('apiFooterLastSync');
+        if (ls) ls.textContent = 'Synced ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      }
+
+      // Clock
+      function tickClock() {
+        const el = document.getElementById('apiFooterTime');
+        if (el) el.textContent = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      }
+
+      // Run immediately + every 30s
+      pingAll();
+      setInterval(pingAll, 30000);
+      setInterval(tickClock, 1000);
+      tickClock();
+
+      // ── AI Engine Status indicator for System 5 ─────────────────
+      async function checkAiEngine() {
+        const geminiDot = document.getElementById('geminiDot');
+        const geminiLabel = document.getElementById('geminiLabel');
+        const fallbackDot = document.getElementById('fallbackDot');
+        const fallbackLabel = document.getElementById('fallbackLabel');
+
+        if (!geminiDot || !fallbackDot) return;
+
+        // Show checking state while polling
+        geminiDot.style.background = '#6b7280';
+        geminiDot.style.boxShadow = 'none';
+        geminiLabel.textContent = 'Checking...';
+        geminiLabel.style.color = '#9ca3af';
+        fallbackDot.style.background = '#6b7280';
+        fallbackDot.style.boxShadow = 'none';
+        fallbackLabel.textContent = 'Checking...';
+        fallbackLabel.style.color = '#9ca3af';
+
+        try {
+          const res = await fetch('/api/v1/policy/ai-status', { signal: AbortSignal.timeout(6000) });
+          if (!res.ok) throw new Error('API returned ' + res.status);
+          const json = await res.json();
+          if (json.mode === 'gemini') {
+            // Gemini is ACTIVE
+            geminiDot.style.background = '#eab308';
+            geminiDot.style.boxShadow = '0 0 6px #eab30899';
+            geminiLabel.textContent = 'Gemini Active';
+            geminiLabel.style.color = '#fde68a';
+            fallbackDot.style.background = '#6b7280';
+            fallbackDot.style.boxShadow = 'none';
+            fallbackLabel.textContent = 'Local Fallback (Standby)';
+            fallbackLabel.style.color = '#9ca3af';
+          } else {
+            // Gemini quota hit — fallback active
+            geminiDot.style.background = '#ef4444';
+            geminiDot.style.boxShadow = '0 0 6px #ef444499';
+            geminiLabel.textContent = json.error === 429 ? 'Gemini (Quota Limit)' : 'Gemini Unavailable';
+            geminiLabel.style.color = '#fca5a5';
+            fallbackDot.style.background = '#22c55e';
+            fallbackDot.style.boxShadow = '0 0 6px #22c55e99';
+            fallbackLabel.textContent = 'Local Fallback Active';
+            fallbackLabel.style.color = '#c4faea';
+          }
+        } catch (err) {
+          geminiDot.style.background = '#f97316';
+          geminiDot.style.boxShadow = '0 0 6px #f9731699';
+          geminiLabel.textContent = 'API Unreachable';
+          geminiLabel.style.color = '#fdba74';
+          fallbackDot.style.background = '#22c55e';
+          fallbackDot.style.boxShadow = '0 0 6px #22c55e99';
+          fallbackLabel.textContent = 'Local Fallback Active';
+          fallbackLabel.style.color = '#c4faea';
+          console.warn('[AiEngine] Status check failed:', err.message);
+        }
+      }
+      checkAiEngine();
+      // Re-check every 60s so badges update when quota resets
+      setInterval(checkAiEngine, 60000);
+    })();
+  </script>
+
+</body>
+
+</html>
