@@ -3068,6 +3068,58 @@ body {
     display: none;
     /* Hide dots in full-screen center mode */
   }
+
+  /* --- Mobile Grid Breakdowns --- */
+  .s1-grid,
+  .s2-grid,
+  .s4-grid,
+  .s5-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+
+  .s2-grid>*,
+  .s4-grid>*,
+  .s5-grid>* {
+    grid-column: 1 / -1 !important;
+    grid-row: auto !important;
+  }
+
+  .panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .panel-controls {
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .inaction-results,
+  .ai-metrics-row {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .responsive-split-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media (max-width: 600px) {
+    .responsive-split-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    .inaction-results,
+    .ai-metrics-row {
+      grid-template-columns: 1fr !important;
+    }
+  }
 }
 
 /* Uniform Text Alignment & Neatness */
