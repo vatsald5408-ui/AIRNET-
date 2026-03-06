@@ -376,7 +376,7 @@ body {
 
 /* ════════════════════ MAIN CONTENT ════════════════════ */
 .main-content {
-  padding: 24px 28px;
+  padding: 12px 28px 24px;
   max-width: 1600px;
   margin: 0 auto;
   position: relative;
@@ -3130,6 +3130,12 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+    padding-top: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .main-content {
+    padding-top: 0 !important;
   }
 
   .panel-controls {
