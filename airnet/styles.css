@@ -1504,16 +1504,6 @@ body {
   grid-column: 1 / -1;
 }
 
-/* Mobile breakdown */
-@media (max-width: 1024px) {
-  .s3-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .s3-grid>* {
-    grid-column: 1 / -1 !important;
-  }
-}
 
 .infra-item {
   display: flex;
@@ -3072,13 +3062,16 @@ body {
   /* --- Mobile Grid Breakdowns --- */
   .s1-grid,
   .s2-grid,
+  .s3-grid,
   .s4-grid,
   .s5-grid {
     grid-template-columns: 1fr !important;
     gap: 16px;
   }
 
+  .s1-grid>*,
   .s2-grid>*,
+  .s3-grid>*,
   .s4-grid>*,
   .s5-grid>* {
     grid-column: 1 / -1 !important;
