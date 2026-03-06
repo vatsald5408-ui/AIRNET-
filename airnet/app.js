@@ -236,6 +236,7 @@ function initNav() {
 
       // Close mobile menu
       header.classList.remove('nav-open');
+      document.body.classList.remove('nav-lock');
 
       // Resize maps
       if (btn.dataset.system === '1' && window._airnetMap) {

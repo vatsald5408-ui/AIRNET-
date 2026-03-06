@@ -3004,6 +3004,8 @@ body {
     /* Start from top to prevent clipping */
     align-items: center;
     scrollbar-width: none;
+    pointer-events: none;
+    /* Block interactions when hidden */
   }
 
   .header-nav::-webkit-scrollbar {
@@ -3012,6 +3014,8 @@ body {
 
   .header.nav-open .header-nav {
     transform: translateY(0);
+    pointer-events: auto;
+    /* Enable interactions when open */
   }
 
   .header.nav-open .nav-btn {
