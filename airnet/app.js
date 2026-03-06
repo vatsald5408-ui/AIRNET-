@@ -256,7 +256,8 @@ function initNav() {
     toggle.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      header.classList.toggle('nav-open');
+      const isOpen = header.classList.toggle('nav-open');
+      document.body.classList.toggle('nav-lock', isOpen);
     });
   });
 
@@ -265,6 +266,7 @@ function initNav() {
   if (closeBtn) {
     closeBtn.addEventListener('click', () => {
       header.classList.remove('nav-open');
+      document.body.classList.remove('nav-lock');
     });
   }
 
@@ -272,6 +274,7 @@ function initNav() {
   document.addEventListener('click', (e) => {
     if (header.classList.contains('nav-open') && !header.contains(e.target)) {
       header.classList.remove('nav-open');
+      document.body.classList.remove('nav-lock');
     }
   });
 }
